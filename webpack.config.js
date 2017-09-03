@@ -5,7 +5,15 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var config = {
     context: __dirname + '/src',
     entry: {
-        www: './www.react.js'
+        www: [
+            'console-polyfill',
+            'es5-shim',
+            'es5-shim/es5-sham',
+            'es6-promise',
+            'fetch-ie8',
+            'babel-polyfill',
+            './www.react.js'
+        ]
     },
     plugins: [
         new AssetsPlugin({filename: 'src/assets.json'}),
@@ -49,6 +57,12 @@ var config = {
                     name: 'assets/[hash].[ext]',
                     limit: 10000
                 }
+            },
+            {
+                enforce: 'post',
+                test: /\.js[x]?$/,
+                exclude: /node_modules/,
+                use: 'es3ify-loader'
             }
         ]
     },
