@@ -7,3 +7,4 @@ build/
 .env
 .idea
 .DS_STORE
+assets.json
