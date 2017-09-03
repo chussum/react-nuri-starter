@@ -1,0 +1,9 @@
+node_modules/
+lib/
+yarn.lock
+yarn-error.log
+npm-debug.log
+build/
+.env
+.idea
+.DS_STORE

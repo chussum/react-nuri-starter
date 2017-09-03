@@ -1,0 +1,23 @@
+{
+    "presets": [
+        "es2015",
+        "react"
+    ],
+    "plugins": [
+        "transform-class-properties",
+        "transform-object-rest-spread",
+        "transform-flow-strip-types",
+        [
+            "module-resolver",
+            {
+                "root": [
+                    "./src"
+                ],
+                "alias": {
+                    "nuri": "./src/_/external/nuri"
+                },
+                "cwd": "babelrc"
+            }
+        ]
+    ]
+}

@@ -1,0 +1,26 @@
+doctype html
+html(lang='ko')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='initial-scale=1, minimum-scale=1, width=device-width')
+        if title
+            meta(property='title', content=title)
+        if description
+            meta(property='description', content=description)
+        if keywords
+            meta(property='keywords', content=keywords)
+        meta(property='og:type', content='website')
+        if title
+            meta(property='og:title', content=title)
+        if description
+            meta(property='og:description', content=description)
+        if ogImage
+            meta(property='og:image', content=ogImage)
+        title #{title}
+        each path in stylesheets
+            link(rel='stylesheet' href=path)
+    body
+        div(id='app') !{html}
+        each path in scripts
+            script(src=path)
