@@ -6,9 +6,9 @@ var config = {
     context: __dirname + '/src',
     entry: {
         www: [
-            'console-polyfill',
             'es5-shim',
             'es5-shim/es5-sham',
+            'console-polyfill',
             'es6-promise',
             'fetch-ie8',
             'babel-polyfill',
@@ -61,7 +61,6 @@ var config = {
             {
                 enforce: 'post',
                 test: /\.js[x]?$/,
-                exclude: /node_modules/,
                 use: 'es3ify-loader'
             }
         ]
