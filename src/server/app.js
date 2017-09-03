@@ -52,6 +52,7 @@ function sendResponse(res, { preloadData, meta, title, errorStatus, redirectURI,
     }
 }
 
+server.locals.pretty= true;
 server.use(favicon(path.join(__dirname, '..', '_', 'favicon', 'favicon.ico')));
 server.use('/assets', express.static(path.join(__dirname, '..', '..', 'build')));
 server.get('/api/posts', (req, res) => {
