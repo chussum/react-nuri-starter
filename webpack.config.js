@@ -19,38 +19,49 @@ var config = {
         new AssetsPlugin({filename: 'src/assets.json'}),
     ],
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.js[x]?$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader',
+                use: 'babel-loader',
             },
             {
                 test: /\.json$/,
-                loader: 'json-loader'
+                use: 'json-loader'
             },
             {
                 test: /\.less$/,
-                loader: ExtractTextPlugin.extract('style-loader', 'css-loader?localIdentName=[name]_[local]_[hash:base64:5]!postcss-loader!less-loader')
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        'css-loader?localIdentName=[name]_[local]_[hash:base64:5]',
+                        'postcss-loader',
+                        'less-loader',
+                    ]
+                })
             },
             {
                 test: /\.css$/,
-                loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader')
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        'css-loader',
+                        'postcss-loader',
+                    ]
+                })
             },
             {
                 test: /\.(ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
                 loader: 'url-loader',
-                query: {
+                options: {
                     name: 'assets/[hash].[ext]',
                     limit: 10000
                 }
-            }
-        ],
-        preLoaders: [],
-        postLoaders: [
+            },
             {
+                enforce: 'post',
                 test: /\.js[x]?$/,
-                loader: 'es3ify-loader'
+                use: 'es3ify-loader'
             }
         ]
     },
@@ -93,10 +104,11 @@ if (process.env.NODE_ENV == 'production') {
         new ExtractTextPlugin('[name].css')
     ].concat(config.plugins);
     config.devtool = 'cheap-source-map';
-    config.module.preLoaders.push({
+    config.module.rules.push({
+        enforce: 'pre',
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'eslint-loader'
+        use: 'eslint-loader'
     });
 }
 
