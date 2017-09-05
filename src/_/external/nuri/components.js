@@ -30,12 +30,12 @@ function isModifiedEvent(event) {
 export function Link(props: {
   to: string,
   queryParams?: {[key: string]: any},
-  onClick: any,
+  onClick: any
 }, context: {controller: ?AppController}) {
   const { to, queryParams = {}, onClick, ...restProps } = props;
   const uri = {
     path: to,
-    query: queryParams,
+    query: queryParams
   };
 
   function handleClick(event) {

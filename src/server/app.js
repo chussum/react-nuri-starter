@@ -1,4 +1,5 @@
-import 'isomorphic-fetch';
+import request from 'request';
+import Promise from 'bluebird';
 import dotenv from 'dotenv';
 import path from 'path';
 import ReactDOMServer from 'react-dom/server';
@@ -12,8 +13,20 @@ dotenv.config();
 injectLoaderFactory(serverRequest => {
     serverRequest.loaderCalls = [];
     // TODO: pass cookies/etc.
-    return function loader(path) {
-        return fetch('http://127.0.0.1:9000' + path).then(r => r.json());
+    return function loader(path, params) {
+        return new Promise((resolve, reject) => {
+            request({
+                baseUrl: 'http://127.0.0.1:9000',
+                url: path,
+                qs: params,
+            }, (err, response, body) => {
+                if (!err) {
+                    resolve(JSON.parse(body));
+                } else {
+                    reject(err);
+                }
+            });
+        });
     };
 });
 
@@ -40,7 +53,7 @@ function sendResponse(res, { preloadData, meta, title, errorStatus, redirectURI,
                 assetFilenames.www.css,
             ],
             scripts: [
-                assetFilenames.common.js,
+                // assetFilenames.common.js,
                 assetFilenames.www.js,
             ],
             description: meta.description || WEBSITE_DESCRIPTION,

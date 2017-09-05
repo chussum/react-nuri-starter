@@ -37,7 +37,7 @@ export function render(app: App, serverRequest: ServerRequest): Promise<RenderRe
     loader: _loaderFactory(serverRequest),
     path: serverRequest.path,
     query: serverRequest.query,
-    params,
+    params
   });
   const loadPromise = handler.load ?
     handler.load(request)
@@ -57,7 +57,7 @@ function createResult(request: Request, handler: RouteHandler, response: Respons
       title: '',
       meta: {},
       redirectURI: ((response: any): Redirect).uri,
-      getHTML: () => '',
+      getHTML: () => ''
     };
   }
 
@@ -65,7 +65,7 @@ function createResult(request: Request, handler: RouteHandler, response: Respons
   const element = createRouteElement(handler.component, {
     data,
     writeData: noOpWriteData,
-    loader: request.loader,
+    loader: request.loader
   });
   return {
     preloadData: data,

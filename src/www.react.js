@@ -1,9 +1,9 @@
-import 'isomorphic-fetch';
 import {injectLoader, render} from 'nuri/client';
 import app from './routes';
+import $ from 'jquery';
 
 function loader(path) {
-    return fetch(path).then(r => r.json());
+    return $.get('http://127.0.0.1:9000' + path);
 }
 
 injectLoader(loader);
@@ -11,13 +11,16 @@ injectLoader(loader);
 const controller = render(app, document.getElementById('app'), window.preloadData);
 controller.subscribe({
     willLoad() {
-        // console.log('willLoad');
+        // eslint-disable-next-line
+        console.log('willLoad');
     },
     didLoad() {
-        // console.log('didLoad');
+        // eslint-disable-next-line
+        console.log('didLoad');
     },
     didAbortLoad() {
-        // console.log('abort');
+        // eslint-disable-next-line
+        console.log('abort');
     },
     didCommitState() {
     },

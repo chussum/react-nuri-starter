@@ -6,8 +6,6 @@ var config = {
     context: __dirname + '/src',
     entry: {
         www: [
-            'es5-shim',
-            'es5-shim/es5-sham',
             'console-polyfill',
             'es6-promise',
             'fetch-ie8',
@@ -50,7 +48,7 @@ var config = {
         postLoaders: [
             {
                 test: /\.js[x]?$/,
-                loader: 'es3ify-loader'
+                loaders: ['es3ify-loader']
             }
         ]
     },
@@ -58,6 +56,11 @@ var config = {
         path: path.resolve(__dirname, 'build'),
         publicPath: '/assets/',
         filename: '[name].js'
+    },
+    node: {
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty'
     }
 };
 
@@ -68,16 +71,20 @@ if (process.env.NODE_ENV == 'production') {
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     });
 
-    var uglifyPlugin = new webpack.optimize.UglifyJsPlugin();
-    var commonsPlugin = new webpack.optimize.CommonsChunkPlugin({ name: 'common', filename: 'common-[hash].js' });
-    var loaderPlugin = new webpack.LoaderOptionsPlugin({
-        minimize: true,
+    var uglifyPlugin = new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            screw_ie8: false, // React doesn't support IE8
+            warnings: false
+        },
+        mangle: false,
+        output: {
+            comments: false,
+            screw_ie8: false
+        }
     });
     config.plugins = [
         definePlugin,
         uglifyPlugin,
-        commonsPlugin,
-        loaderPlugin,
         new ExtractTextPlugin('[name]-[contenthash].css')
     ].concat(config.plugins);
 
@@ -86,10 +93,7 @@ if (process.env.NODE_ENV == 'production') {
 } else {
     console.log('* Development Build');
 
-    var commonsPlugin = new webpack.optimize.CommonsChunkPlugin({ name: 'common', filename: 'common.js' });
-
     config.plugins = [
-        commonsPlugin,
         new ExtractTextPlugin('[name].css')
     ].concat(config.plugins);
     config.devtool = 'cheap-source-map';

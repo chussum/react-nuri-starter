@@ -1,7 +1,7 @@
 /* @flow */
 
 import pathToRegexp from 'path-to-regexp';
-import isFunction from 'lodash/isFunction';
+import isFunction from 'lodash/lang/isFunction';
 
 export type Route = {
   regexp: RegExp;
@@ -68,7 +68,7 @@ export type Request = BaseRequest & {
 export function createRequest(base: BaseRequest): Request {
   return {
     ...base,
-    redirect,
+    redirect
   };
 }
 
@@ -79,7 +79,7 @@ const defaultHandler: RouteHandler = {
     return Promise.reject({status: 404});
   },
 
-  component: () => null,
+  component: () => null
 };
 
 export class App {
@@ -104,7 +104,7 @@ export class App {
     this.routes.push({
       regexp,
       keys,
-      handler,
+      handler
     });
   }
 }
@@ -125,13 +125,13 @@ export function matchRoute(app: App, uri: ParsedURI): RouteMatch {
       }
       return {
         handler: route.handler,
-        params,
+        params
       };
     }
   }
   return {
     handler: app.defaultHandler,
-    params: {},
+    params: {}
   };
 }
 

@@ -1,10 +1,7 @@
 /* @flow */
 
 import {v4 as generateToken} from 'uuid';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/switchMap';
-import {Subscription} from 'rxjs/Subscription';
+import * as Rx from 'rx';
 import {Redirect} from '../app';
 import type {ParsedURI} from '../app';
 import type {Location} from './history';
@@ -27,7 +24,7 @@ export interface NavigationControllerDelegate<T> {
   didAbortLoad(): void;
   didCommitLoad(type: NavigationType, entry: NavigationEntry<T>): void;
 
-  loadState(uri: ParsedURI): Observable<LoadResult<T>>;
+  loadState(uri: ParsedURI): Rx.Observable<LoadResult<T>>;
 }
 
 export class NavigationController<T> {
@@ -35,7 +32,7 @@ export class NavigationController<T> {
   entries: {[token: string]: NavigationEntry<T>};
   currentEntry: ?NavigationEntry<T>;
   started: boolean;
-  loadSubscription: Subscription;
+  loadSubscription: Rx.Subscription;
 
   constructor(delegate: NavigationControllerDelegate<T>) {
     this.delegate = delegate;
@@ -43,7 +40,7 @@ export class NavigationController<T> {
     this.currentEntry = null;
     this.started = false;
     // Subscription.EMPTY is missing in flow-typed
-    this.loadSubscription = (Subscription: any).EMPTY;
+    this.loadSubscription = (Rx.Subscription: any).EMPTY;
   }
 
   start({ uri, token }: Location, preloadState?: T) {
@@ -57,7 +54,7 @@ export class NavigationController<T> {
         uri,
         token: generateToken(),
         state: preloadState,
-        isRedirect: false,
+        isRedirect: false
       });
     } else {
       this._navigate('replace', uri, generateToken());
@@ -83,7 +80,7 @@ export class NavigationController<T> {
 
   _abortLoad() {
     if (!this.loadSubscription.closed) {
-      this.loadSubscription.unsubscribe();
+      this.loadSubscription.dispose();
       this.delegate.didAbortLoad();
     }
   }
@@ -101,17 +98,17 @@ export class NavigationController<T> {
     }); // TODO: handle onError
   }
 
-  _load(uri: ParsedURI, token: string, isRedirect: boolean = false): Observable<NavigationEntry<T>> {
+  _load(uri: ParsedURI, token: string, isRedirect: boolean = false): Rx.Observable<NavigationEntry<T>> {
     return this.delegate.loadState(uri)
-      .switchMap(result => {
+      .flatMapLatest(result => {
         if (result instanceof Redirect) {
           return this._load(parseURI(result.uri), generateToken(), true);
         } else {
-          return Observable.of({
+          return Rx.Observable.of({
             uri,
             token,
             state: result,
-            isRedirect,
+            isRedirect
           });
         }
       });

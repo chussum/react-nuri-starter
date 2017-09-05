@@ -16,11 +16,11 @@ export function parseURI(uri: string): ParsedURI {
   if (queryStart < 0)
     return {
       path: uri,
-      query: {},
+      query: {}
     };
   else
     return {
       path: uri.substring(0, queryStart),
-      query: querystring.parse(uri.substring(queryStart + 1)),
+      query: querystring.parse(uri.substring(queryStart + 1))
     };
 }

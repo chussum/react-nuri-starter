@@ -44,7 +44,7 @@ export class AppView {
       controller: this.controller,
       data,
       writeData: this.writeData.bind(this, state),
-      loader: this.controller.getLoader(),
+      loader: this.controller.getLoader()
     });
     ReactDOM.render(element, this.container);
     window.scrollTo(scrollX, scrollY);

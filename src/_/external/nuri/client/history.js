@@ -1,11 +1,7 @@
 /* @flow */
 
 import querystring from 'querystring';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/never';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
+import * as Rx from 'rx';
 import type {ParsedURI} from '../app';
 import {uriToString} from '../util';
 
@@ -17,7 +13,7 @@ export type Location = {|
 export interface History {
   getLocation(): Location;
   setHistoryToken(token: string): void;
-  locationChanges(): Observable<Location>;
+  locationChanges(): Rx.Observable<Location>;
   pushLocation(location: Location): void;
   doesPushLocationRefreshPage(): boolean;
 }
@@ -31,7 +27,7 @@ export function createHistory(): History {
 
 export class BrowserHistory implements History {
   locationChanges() {
-    return Observable.fromEvent(window, 'popstate')
+    return Rx.Observable.fromEvent(window, 'popstate')
       // Ignore extraneous popstate events in WebKit
       // https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onpopstate
       .filter(event => event.state !== undefined)
@@ -42,7 +38,7 @@ export class BrowserHistory implements History {
     return {
       uri: {
         path: location.pathname,
-        query: querystring.parse(location.search.substring(1)),
+        query: querystring.parse(location.search.substring(1))
       },
       token: history.state && history.state.token,
     };
@@ -69,7 +65,7 @@ export class FallbackHistory implements History {
         path: location.pathname,
         query: querystring.parse(location.search.substring(1)),
       },
-      token: null,
+      token: null
     };
   }
 
@@ -79,7 +75,7 @@ export class FallbackHistory implements History {
   }
 
   locationChanges() {
-    return Observable.never();
+    return Rx.Observable.never();
   }
 
   pushLocation({ uri }: Location) {

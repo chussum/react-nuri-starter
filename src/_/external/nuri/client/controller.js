@@ -1,9 +1,6 @@
 /* @flow */
 
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/defer';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/map';
+import * as Rx from 'rx';
 import {matchRoute, createRequest, isRedirect} from '../app';
 import type {App, PreloadData, Loader, Redirect, WireObject, RouteHandler, ParsedURI} from '../app';
 import {NavigationController} from './navigation';
@@ -125,13 +122,13 @@ class AppControllerPrivate implements NavigationControllerDelegate<AppState> {
     }
   }
 
-  loadState(uri: ParsedURI): Observable<LoadResult<AppState>> {
+  loadState(uri: ParsedURI): Rx.Observable<LoadResult<AppState>> {
     const {handler, params} = this._matchRoute(uri);
     const load = handler.load;
     if (!load) {
-      return Observable.of({
+      return Rx.Observable.of({
         handler,
-        data: {},
+        data: {}
       });
     }
     const request = createRequest({
@@ -139,9 +136,9 @@ class AppControllerPrivate implements NavigationControllerDelegate<AppState> {
       loader: _loader,
       path: uri.path,
       query: uri.query,
-      params,
+      params
     });
-    return Observable.defer(() => load(request))
+    return Rx.Observable.defer(() => load(request))
       .map(response => {
         if (isRedirect(response)) {
           return ((response: any): Redirect);
@@ -149,7 +146,7 @@ class AppControllerPrivate implements NavigationControllerDelegate<AppState> {
           const data: WireObject = response;
           return {
             handler,
-            data,
+            data
           };
         }
       });
