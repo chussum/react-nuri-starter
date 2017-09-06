@@ -5,7 +5,10 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var config = {
     context: __dirname + '/src',
     entry: {
-        www: './www.react.js'
+        www: [
+            'babel-polyfill',
+            './www.react.js'
+        ]
     },
     plugins: [
         new AssetsPlugin({filename: 'src/assets.json'}),
