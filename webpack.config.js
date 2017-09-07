@@ -32,19 +32,20 @@ var config = {
                     fallback: 'style-loader',
                     use: [{
                         loader: 'css-loader',
-                        query: {
+                        options: {
+                            importLoaders: 2,
                             localIdentName: '[name]_[local]_[hash:base64:5]',
-                            sourceMap: !isProduction,
+                            sourceMap: !isProduction
                         }
                     }, {
                         loader: 'postcss-loader',
-                        query: {
-                            sourceMap: !isProduction,
+                        options: {
+                            sourceMap: !isProduction
                         }
                     }, {
                         loader: 'less-loader',
-                        query: {
-                            sourceMap: !isProduction,
+                        options: {
+                            sourceMap: !isProduction
                         }
                     }]
                 })
@@ -55,13 +56,14 @@ var config = {
                     fallback: 'style-loader',
                     use: [{
                         loader: 'css-loader',
-                        query: {
-                            sourceMap: !isProduction,
+                        options: {
+                            importLoaders: 1,
+                            sourceMap: !isProduction
                         }
                     }, {
                         loader: 'postcss-loader',
-                        query: {
-                            sourceMap: !isProduction,
+                        options: {
+                            sourceMap: !isProduction
                         }
                     }]
                 })
