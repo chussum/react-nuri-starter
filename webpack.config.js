@@ -2,6 +2,8 @@ var path = require('path');
 var webpack = require('webpack');
 var AssetsPlugin = require('assets-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var WebpackCleanupPlugin = require('webpack-cleanup-plugin');
+var isProduction = (process.env.NODE_ENV == 'production');
 var config = {
     context: __dirname + '/src',
     entry: {
@@ -28,21 +30,40 @@ var config = {
                 test: /\.less$/,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
-                    use: [
-                        'css-loader?localIdentName=[name]_[local]_[hash:base64:5]',
-                        'postcss-loader',
-                        'less-loader',
-                    ]
+                    use: [{
+                        loader: 'css-loader',
+                        query: {
+                            localIdentName: '[name]_[local]_[hash:base64:5]',
+                            sourceMap: !isProduction,
+                        }
+                    }, {
+                        loader: 'postcss-loader',
+                        query: {
+                            sourceMap: !isProduction,
+                        }
+                    }, {
+                        loader: 'less-loader',
+                        query: {
+                            sourceMap: !isProduction,
+                        }
+                    }]
                 })
             },
             {
                 test: /\.css$/,
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
-                    use: [
-                        'css-loader',
-                        'postcss-loader',
-                    ]
+                    use: [{
+                        loader: 'css-loader',
+                        query: {
+                            sourceMap: !isProduction,
+                        }
+                    }, {
+                        loader: 'postcss-loader',
+                        query: {
+                            sourceMap: !isProduction,
+                        }
+                    }]
                 })
             },
             {
@@ -62,7 +83,7 @@ var config = {
     }
 };
 
-if (process.env.NODE_ENV == 'production') {
+if (isProduction) {
     console.log('* Production Build');
 
     var definePlugin = new webpack.DefinePlugin({
@@ -79,10 +100,10 @@ if (process.env.NODE_ENV == 'production') {
         uglifyPlugin,
         commonsPlugin,
         loaderPlugin,
-        new ExtractTextPlugin('[name]-[contenthash].css')
+        new ExtractTextPlugin('[name]-[contenthash].css'),
     ].concat(config.plugins);
 
-    config.devtool = 'source-map';
+    config.devtool = 'cheap-module-source-map';
     config.output.filename = '[name]-[hash].js';
 } else {
     console.log('* Development Build');
@@ -91,9 +112,10 @@ if (process.env.NODE_ENV == 'production') {
 
     config.plugins = [
         commonsPlugin,
-        new ExtractTextPlugin('[name].css')
+        new ExtractTextPlugin('[name].css'),
+        new WebpackCleanupPlugin()
     ].concat(config.plugins);
-    config.devtool = 'cheap-source-map';
+    config.devtool = 'source-map';
     config.module.rules.push({
         enforce: 'pre',
         test: /\.js$/,
