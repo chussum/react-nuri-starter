@@ -21,5 +21,6 @@ const app = require('./server/app');
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
+    // eslint-disable-next-line
     console.log('Server running at port', port);
 });

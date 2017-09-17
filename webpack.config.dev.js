@@ -16,6 +16,9 @@ var config = webpackMerge({
             'webpack-hot-middleware/client',
         ],
     },
+    output: {
+        filename: '[name].js',
+    },
     module: {
         rules: [
             {

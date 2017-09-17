@@ -1,2 +1,1 @@
-src/server.js
-*.config.js
+*.config*.js
