@@ -34,7 +34,7 @@ if (module.hot) {
 
     // eslint-disable-next-line
     console.log = function (message) {
-        if (~message.indexOf('App is up to date.')) {
+        if (typeof message === 'string' && ~message.indexOf('App is up to date.')) {
             const links = document.getElementsByTagName("link");
             for (let link of links) {
                 if (~link.getAttribute('rel').indexOf('stylesheet')) {
