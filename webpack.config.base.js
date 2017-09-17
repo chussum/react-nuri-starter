@@ -13,7 +13,6 @@ var config = {
     output: {
         path: path.resolve(__dirname, 'build'),
         publicPath: '/assets/',
-        filename: '[name].js',
     },
     module: {
         rules: [
@@ -69,10 +68,11 @@ var config = {
                 })
             },
             {
-                test: /\.(ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
+                test: /\.(ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)(\?\S*)?$/,
                 loader: 'url-loader',
                 options: {
-                    name: 'assets/[hash].[ext]',
+                    regExp: '\\b_/(.+)',
+                    name: '[1]?v=[hash]',
                     limit: 10000
                 }
             },

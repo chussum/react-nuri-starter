@@ -54,7 +54,7 @@ let sendResponse = (res, { preloadData, meta, title, errorStatus, redirectURI, e
     if (element) {
         res.render(path.resolve(__dirname, '..', 'index.pug'), {
             title: title,
-            html: ReactDOMServer.renderToString(element),
+            html: !isDev && ReactDOMServer.renderToString(element),
             preloadData: JSON.stringify(preloadData),
             stylesheets: stylesheets,
             scripts: scripts,

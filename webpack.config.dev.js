@@ -5,7 +5,6 @@ require('dotenv').config();
 var webpack = require('webpack');
 var webpackMerge = require('webpack-merge');
 var webpackBaseConfig = require('./webpack.config.base.js');
-var WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var config = webpackMerge({
@@ -36,8 +35,7 @@ var config = webpackMerge({
             name: 'common',
             filename: 'common.js'
         }),
-        new ExtractTextPlugin('[name].css'),
-        new WebpackCleanupPlugin(),
+        new ExtractTextPlugin('[name].css')
     ],
 }, webpackBaseConfig);
 

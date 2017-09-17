@@ -21,7 +21,10 @@ html(lang='ko')
         each path in stylesheets
             link(rel='stylesheet' href=path)
     body
-        div(id='app') !{html}
+        if html
+            div(id='app') !{html}
+        else
+            div(id='app')
         each path in scripts
             script(src=path)
         if preloadData

@@ -14,7 +14,8 @@
                     "./src"
                 ],
                 "alias": {
-                    "nuri": "./src/_/external/nuri"
+                    "nuri": "./src/_/external/nuri",
+                    "asset-require-hook": "./src/_/external/hooks/assets",
                 },
                 "cwd": "babelrc"
             }
