@@ -8,17 +8,29 @@ function loader(path) {
 
 injectLoader(loader);
 
-const controller = render(app, document.getElementById('app'), window.preloadData);
-controller.subscribe({
-    willLoad() {
-        // console.log('willLoad');
-    },
-    didLoad() {
-        // console.log('didLoad');
-    },
-    didAbortLoad() {
-        // console.log('abort');
-    },
-    didCommitState() {
-    },
-});
+window.startApp = (preloadData, routes) => {
+    const controller = render(routes || app, document.getElementById('app'), preloadData);
+    controller.subscribe({
+        willLoad() {
+            // eslint-disable-next-line
+            console.log('willLoad');
+        },
+        didLoad() {
+            // eslint-disable-next-line
+            console.log('didLoad');
+        },
+        didAbortLoad() {
+            // eslint-disable-next-line
+            console.log('abort');
+        },
+        didCommitState() {
+        },
+    });
+};
+
+if (module.hot) {
+    module.hot.accept('./routes', () => {
+        const newRoutes = require('./routes').default;
+        window.startApp(window.preloadData, newRoutes);
+    });
+}

@@ -7,13 +7,14 @@ var config = {
     context: __dirname + '/src',
     entry: {
         www: [
-            'babel-polyfill',
-            './www.react.js'
+            './www.react.js',
         ]
     },
-    plugins: [
-        new AssetsPlugin({filename: 'src/assets.json'}),
-    ],
+    output: {
+        path: path.resolve(__dirname, 'build'),
+        publicPath: '/assets/',
+        filename: '[name].js',
+    },
     module: {
         rules: [
             {
@@ -74,14 +75,12 @@ var config = {
                     name: 'assets/[hash].[ext]',
                     limit: 10000
                 }
-            }
+            },
         ]
     },
-    output: {
-        path: path.resolve(__dirname, 'build'),
-        publicPath: '/assets/',
-        filename: '[name].js'
-    }
+    plugins: [
+        new AssetsPlugin({filename: 'src/assets.json'}),
+    ],
 };
 
 module.exports = config;

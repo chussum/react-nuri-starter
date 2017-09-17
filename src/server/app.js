@@ -6,7 +6,7 @@ import express from 'express';
 import favicon from 'serve-favicon';
 import {injectLoaderFactory, render} from 'nuri/server';
 import routes from '../routes';
-import assetFilenames from '../assets.json';
+import forEach from 'lodash/forEach';
 
 dotenv.config();
 injectLoaderFactory(serverRequest => {
@@ -17,11 +17,31 @@ injectLoaderFactory(serverRequest => {
     };
 });
 
+const isDev = (process.env.NODE_ENV !== 'production');
 const server = express();
 const HttpNotFound = {};
 const {WEBSITE_DESCRIPTION, WEBSITE_KEYWORDS, WEBSITE_OG_IMAGE} = process.env;
 
-function sendResponse(res, { preloadData, meta, title, errorStatus, redirectURI, element }) {
+if (isDev) {
+    const config = require('../../webpack.config.dev');
+    const compiler = require('webpack')(config);
+    const devMiddleware = require('webpack-dev-middleware');
+    const hotMiddleware = require('webpack-hot-middleware');
+
+    server.use(devMiddleware(compiler, {
+        noInfo: true,
+        publicPath: config.output.publicPath
+    }));
+    server.use(hotMiddleware(compiler, {
+        // eslint-disable-next-line
+        log: console.log,
+    }));
+}
+
+let assetFilenames;
+let stylesheets = [];
+let scripts = [];
+let sendResponse = (res, { preloadData, meta, title, errorStatus, redirectURI, element }) => {
     if (errorStatus === 404) {
         throw HttpNotFound;
     }
@@ -36,13 +56,8 @@ function sendResponse(res, { preloadData, meta, title, errorStatus, redirectURI,
             title: title,
             html: ReactDOMServer.renderToString(element),
             preloadData: JSON.stringify(preloadData),
-            stylesheets: [
-                assetFilenames.www.css,
-            ],
-            scripts: [
-                assetFilenames.common.js,
-                assetFilenames.www.js,
-            ],
+            stylesheets: stylesheets,
+            scripts: scripts,
             description: meta.description || WEBSITE_DESCRIPTION,
             keywords: meta.keywords || WEBSITE_KEYWORDS,
             ogImage: meta.ogImage || WEBSITE_OG_IMAGE,
@@ -50,10 +65,12 @@ function sendResponse(res, { preloadData, meta, title, errorStatus, redirectURI,
     } else {
         throw HttpNotFound;
     }
-}
+};
 
 server.locals.pretty= true;
 server.use(favicon(path.join(__dirname, '..', '_', 'favicon', 'favicon.ico')));
+server.use('/img', express.static(path.join(__dirname, '..', '_', 'img')));
+server.use('/fonts', express.static(path.join(__dirname, '..', '_', 'fonts')));
 server.use('/assets', express.static(path.join(__dirname, '..', '..', 'build')));
 server.get('/api/posts', (req, res) => {
     const posts = [];
@@ -70,6 +87,13 @@ server.get('/api/posts/:id', (req, res) => {
 });
 
 server.get('*', (req, res, next) => {
+    if (!assetFilenames) {
+        assetFilenames = require('../assets.json');
+        forEach(assetFilenames, (entry) => {
+            entry['css'] && stylesheets.splice(0, 0, entry['css']);
+            entry['js'] && scripts.splice(0, 0, entry['js']);
+        });
+    }
     render(routes, req)
         .then(result => {
             sendResponse(res, result);

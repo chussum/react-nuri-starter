@@ -5,8 +5,13 @@ var webpackMerge = require('webpack-merge');
 var webpackBaseConfig = require('./webpack.config.base.js');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-var config = webpackMerge(webpackBaseConfig, {
+var config = webpackMerge({
     devtool: 'cheap-module-source-map',
+    entry: {
+        www: [
+            'babel-polyfill',
+        ]
+    },
     output: {
         filename: '[name]-[hash].js',
     },
@@ -24,6 +29,6 @@ var config = webpackMerge(webpackBaseConfig, {
         }),
         new ExtractTextPlugin('[name]-[contenthash].css'),
     ]
-});
+}, webpackBaseConfig);
 
 module.exports = config;

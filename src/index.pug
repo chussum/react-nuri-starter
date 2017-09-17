@@ -24,3 +24,9 @@ html(lang='ko')
         div(id='app') !{html}
         each path in scripts
             script(src=path)
+        if preloadData
+            script.
+                var preloadData = !{preloadData};
+                if (window.startApp) {
+                    window.startApp(preloadData);
+                }
