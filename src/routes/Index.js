@@ -41,6 +41,6 @@ class Index extends React.Component {
 export default {
     component: Index,
     load({ loader }) {
-        return loader('/api/posts').then(posts => ({ posts }));
+        return loader.call('/api/posts').then(posts => ({ posts }));
     }
 };

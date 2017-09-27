@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import type {DataUpdater, WireObject, RouteComponent, Loader} from './app';
 import {uriToString} from './util';
 import type {AppController} from './client/controller';
@@ -15,7 +16,7 @@ export class ControllerProvider extends React.Component {
   }
 }
 ControllerProvider.childContextTypes = {
-  controller: React.PropTypes.object
+  controller: PropTypes.object
 };
 
 
@@ -66,7 +67,7 @@ export function Link(props: {
 }
 
 Link.contextTypes = {
-  controller: React.PropTypes.object
+  controller: PropTypes.object
 };
 
 

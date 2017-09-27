@@ -1,19 +1,35 @@
-import 'isomorphic-fetch';
 import dotenv from 'dotenv';
 import path from 'path';
 import ReactDOMServer from 'react-dom/server';
 import express from 'express';
 import favicon from 'serve-favicon';
 import {injectLoaderFactory, render} from 'nuri/server';
+import request from 'request';
+import Promise from 'bluebird';
 import routes from '../routes';
-import forEach from 'lodash/forEach';
+import forEach from 'lodash/forEach'
 
 dotenv.config();
 injectLoaderFactory(serverRequest => {
     serverRequest.loaderCalls = [];
-    // TODO: pass cookies/etc.
-    return function loader(path) {
-        return fetch('http://127.0.0.1:9000' + path).then(r => r.json());
+
+    return {
+        call(path, params) {
+            return new Promise((resolve, reject) => {
+                request({
+                    baseUrl: 'http://127.0.0.1:9000',
+                    url: path,
+                    forever: true,
+                    qs: params,
+                }, (err, response, body) => {
+                    if (!err) {
+                        resolve(JSON.parse(body));
+                    } else {
+                        reject(err);
+                    }
+                });
+            });
+        }
     };
 });
 
@@ -72,14 +88,17 @@ server.use(favicon(path.join(__dirname, '..', '_', 'favicon', 'favicon.ico')));
 server.use('/img', express.static(path.join(__dirname, '..', '_', 'img')));
 server.use('/fonts', express.static(path.join(__dirname, '..', '_', 'fonts')));
 server.use('/assets', express.static(path.join(__dirname, '..', '..', 'build')));
+
 server.get('/api/posts', (req, res) => {
     const posts = [];
     for (var i = 1; i < 100; i++) {
-        posts.push({id: i, title: 'Post #' + i});
+        posts.push({
+            id: i,
+            title: 'Post #' + i,
+        });
     }
     res.send(posts).end();
 });
-
 server.get('/api/posts/:id', (req, res) => {
     res.send(
         {id: 2, title: 'This is ReSP'}
@@ -93,6 +112,7 @@ server.get('*', (req, res, next) => {
             entry['css'] && stylesheets.splice(0, 0, entry['css']);
             entry['js'] && scripts.splice(0, 0, entry['js']);
         });
+        stylesheets.splice(0, 0, '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
     }
     render(routes, req)
         .then(result => {

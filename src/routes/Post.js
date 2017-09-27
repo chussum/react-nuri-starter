@@ -12,6 +12,6 @@ export default {
     component: Post,
     renderTitle: (data) => data.title,
     load({ params, loader }) {
-        return loader(`/api/posts/${params.id}`);
+        return loader.call(`/api/posts/${params.id}`);
     }
 };

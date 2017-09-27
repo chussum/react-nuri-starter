@@ -1,27 +1,32 @@
-import 'isomorphic-fetch';
 import {injectLoader, render} from 'nuri/client';
+import $ from 'jquery';
 import app from './routes';
+import NProgress from 'nprogress';
+import './_/less/nprogress.less';
 
-function loader(path) {
-    return fetch(path).then(r => r.json());
-}
-
-injectLoader(loader);
+injectLoader({
+    call(path, params) {
+        return $.get(path, params);
+    }
+});
 
 window.startApp = (preloadData, routes) => {
+    NProgress.configure({
+        trickleRate: 0.4,
+        trickleSpeed: 600,
+        easing: 'ease',
+    });
+
     const controller = render(routes || app, document.getElementById('app'), preloadData);
     controller.subscribe({
         willLoad() {
-            // eslint-disable-next-line
-            console.log('willLoad');
+            NProgress.start();
         },
         didLoad() {
-            // eslint-disable-next-line
-            console.log('didLoad');
+            NProgress.done();
         },
         didAbortLoad() {
-            // eslint-disable-next-line
-            console.log('abort');
+            NProgress.done();
         },
         didCommitState() {
         },

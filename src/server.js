@@ -11,6 +11,9 @@ require('asset-require-hook')({
 });
 require('css-modules-require-hook')({
     extensions: '.less',
+    generateScopedName: '[name]_[local]_[hash:base64:5]',
+    mode: 'global',
+    rootDir: __dirname,
     processorOpts: {
         parser: require('postcss-less').parse
     }
