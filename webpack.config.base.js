@@ -2,6 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 var AssetsPlugin = require('assets-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var DotEnv = require('dotenv-webpack');
 var isProduction = (process.env.NODE_ENV == 'production');
 var config = {
     context: __dirname + '/src',
@@ -80,6 +81,7 @@ var config = {
     },
     plugins: [
         new AssetsPlugin({filename: 'src/assets.json'}),
+        new DotEnv(),
     ],
 };
 
